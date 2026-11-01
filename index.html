@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mi Control">
-<title>Mi Control</title>
+<title>Mi Control - Widget</title>
 
 <style>
 :root {
@@ -29,95 +29,77 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-  padding-bottom: 40px;
-}
-
-header {
-  padding: calc(16px + env(safe-area-inset-top)) 20px 16px;
-  background: linear-gradient(180deg, #131a2e, #0b0f1d);
-  border-bottom: 1px solid var(--line);
+  padding: 16px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: center;
 }
-.logo { font-size: 18px; font-weight: 900; letter-spacing: -0.5px; }
-.logo span { color: var(--accent); }
-.header-badge { font-size: 11px; background: rgba(0,209,255,0.1); border: 1px solid rgba(0,209,255,0.3); padding: 4px 10px; border-radius: 20px; color: var(--accent); font-weight: 700; text-transform: capitalize;}
 
-main { max-width: 600px; margin: auto; padding: 16px; }
+main { width: 100%; max-width: 480px; }
 
-/* ESTIL WIDGET PRINCIPAL */
-.widget-card {
+/* CONTENIDOR DEL WIDGET PRINCIPAL */
+.widget-box {
   background: linear-gradient(145deg, #162340, #0e1628);
   border: 1px solid #25355a;
   border-radius: 24px;
   padding: 20px;
-  margin-bottom: 20px;
   box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  margin-bottom: 20px;
 }
 
-.widget-header {
+.widget-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 16px;
 }
 
-.ring-container {
+/* ANELL DE PROGRÉS VISUAL */
+.ring-wrapper {
   position: relative;
-  width: 110px;
-  height: 110px;
+  width: 105px;
+  height: 105px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.ring-container svg {
+.ring-wrapper svg {
   transform: rotate(-90deg);
   width: 100%;
   height: 100%;
 }
 
-.ring-bg {
-  stroke: #1b2847;
-  stroke-width: 8;
-  fill: none;
-}
-
-.ring-progress {
+.ring-bg { stroke: #1b2847; stroke-width: 9; fill: none; }
+.ring-fill {
   stroke: var(--accent);
-  stroke-width: 8;
+  stroke-width: 9;
   stroke-linecap: round;
   fill: none;
   stroke-dasharray: 283;
   stroke-dashoffset: 283;
-  transition: stroke-dashoffset 0.6s ease, stroke 0.3s;
+  transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
 }
 
-.ring-text {
-  position: absolute;
-  text-align: center;
-}
-.ring-percent { font-size: 18px; font-weight: 800; color: #fff; }
-.ring-label { font-size: 9px; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+.ring-data { position: absolute; text-align: center; }
+.ring-val { font-size: 19px; font-weight: 800; color: #ffffff; }
+.ring-lbl { font-size: 9px; color: var(--muted); text-transform: uppercase; font-weight: 700; }
 
-.widget-info {
-  flex: 1;
-  margin-left: 16px;
-}
-.eyebrow { color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
-.balance { font-size: 26px; font-weight: 800; letter-spacing: -1px; margin: 4px 0; color: #ffffff; }
+.widget-balance { flex: 1; margin-left: 18px; }
+.label-muted { color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; }
+.total-num { font-size: 26px; font-weight: 800; letter-spacing: -1px; margin: 4px 0; color: #ffffff; }
+.sub-info { font-size: 11px; color: var(--muted); }
 
 /* FORMULARI DEL WIDGET */
 .widget-form {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-top: 14px;
-  padding-top: 14px;
+  margin-top: 16px;
+  padding-top: 16px;
   border-top: 1px solid var(--line);
 }
+
 .widget-form input, .widget-form select {
   margin: 0;
   padding: 10px 12px;
@@ -126,10 +108,12 @@ main { max-width: 600px; margin: auto; padding: 16px; }
   border: 1px solid var(--line);
   background: #080c18;
   color: var(--text);
+  width: 100%;
 }
+
 .widget-form button {
   grid-column: span 2;
-  padding: 11px;
+  padding: 12px;
   font-size: 13px;
   border-radius: 10px;
   margin-top: 4px;
@@ -140,61 +124,54 @@ main { max-width: 600px; margin: auto; padding: 16px; }
   cursor: pointer;
 }
 
-.card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 16px; margin-bottom: 16px; }
+/* LLISTA DE MOVIMENTS */
+.section-title { font-size: 13px; margin: 16px 2px 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 12px 16px; }
 .row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .row:last-child { border-bottom: none; }
-.row-title { font-weight: 700; font-size: 14px; }
-.row-sub { color: var(--muted); font-size: 11px; margin-top: 2px; }
-.amount { font-weight: 800; font-size: 14px; }
-.positive { color: var(--green); }
-.negative { color: var(--red); }
-
-h2 { font-size: 15px; margin: 18px 2px 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+.tx-title { font-weight: 700; font-size: 13px; }
+.tx-sub { color: var(--muted); font-size: 11px; margin-top: 2px; }
+.tx-amount { font-weight: 800; font-size: 14px; }
+.pos { color: var(--green); }
+.neg { color: var(--red); }
 </style>
 </head>
 
 <body>
-<header>
-  <div class="logo">◈ MI <span>CONTROL</span></div>
-  <div class="header-badge" id="monthDisplay">--</div>
-</header>
-
 <main>
-  <!-- WIDGET PRINCIPAL AMB ANELL I REGISTRE -->
-  <div class="widget-card">
-    <div class="widget-header">
-      <div class="ring-container">
+  <!-- WIDGET PRINCIPAL -->
+  <div class="widget-box">
+    <div class="widget-top">
+      <div class="ring-wrapper">
         <svg viewBox="0 0 100 100">
           <circle class="ring-bg" cx="50" cy="50" r="45"></circle>
-          <circle class="ring-progress" id="ringCircle" cx="50" cy="50" r="45"></circle>
+          <circle class="ring-fill" id="ringCircle" cx="50" cy="50" r="45"></circle>
         </svg>
-        <div class="ring-text">
-          <div class="ring-percent" id="ringPercent">0%</div>
-          <div class="ring-label">Usat</div>
+        <div class="ring-data">
+          <div class="ring-val" id="ringPercent">0%</div>
+          <div class="ring-lbl">Usat</div>
         </div>
       </div>
-      <div class="widget-info">
-        <div class="eyebrow">Disponible Estimat</div>
-        <div class="balance" id="available">0,00 €</div>
-        <div style="color:var(--muted); font-size:11px;" id="subText">0 € de 0 € compromesos</div>
+      <div class="widget-balance">
+        <div class="label-muted">Disponible Estimat</div>
+        <div class="total-num" id="available">0,00 €</div>
+        <div class="sub-info" id="subText">0 € de 1.900 €</div>
       </div>
     </div>
 
-    <!-- REGISTRE DE DESPESES I INGRESOS (WIDGET) -->
-    <form id="widgetQuickForm" class="widget-form">
-      <input type="number" id="wAmount" step="0.01" min="0.01" placeholder="Quantitat (€)" required>
+    <!-- FORMULARI INTEGRAT DINS DEL WIDGET -->
+    <form id="widgetForm" class="widget-form">
+      <input type="number" id="wAmount" step="0.01" min="0.01" placeholder="Import (€)" required>
       <select id="wType">
         <option value="expense">Despesa (−)</option>
         <option value="income">Ingrés (+)</option>
       </select>
       <input type="text" id="wConcept" placeholder="Concepte (ex. Cafè)" required>
-  <select id="wCategory">
+      <select id="wCategory">
         <option>Supermercat</option>
         <option>Restaurants</option>
         <option>Gasolina Dacia</option>
         <option>Gasolina Honda</option>
-        <option>Tabac</option>
-        <option>Gimnàs</option>
         <option>Gats</option>
         <option>Oci</option>
         <option>Nomina</option>
@@ -204,62 +181,65 @@ h2 { font-size: 15px; margin: 18px 2px 8px; font-weight: 800; text-transform: up
     </form>
   </div>
 
-  <h2>Últims Moviments</h2>
-  <div class="card" id="recent"></div>
+  <div class="section-title">Últims Moviments</div>
+  <div class="card" id="history"></div>
 </main>
 
 <script>
 const KEY = "mi-control-finanzas-v1";
+const BASE_INCOME = 1900;
+const BASE_FIXED = 470; // 425 habitatge + 45 llum
 
-const initialData = {
-  income: 1900, saving: 300,
-  fixed: [{name:"Habitatge",amount:425}, {name:"Llum",amount:45}],
-  transactions:[]
-};
+let data = JSON.parse(localStorage.getItem(KEY)) || { transactions: [] };
 
-let data = JSON.parse(localStorage.getItem(KEY)) || initialData;
 const money = n => new Intl.NumberFormat("es-ES",{style:"currency",currency:"EUR"}).format(Number(n)||0);
 const today = () => new Date().toISOString().split('T')[0];
 
-function save() { localStorage.setItem(KEY, JSON.stringify(data)); render(); }
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(data));
+  render();
+}
 
 function render() {
-  const fixed = data.fixed.reduce((s,x)=>s+Number(x.amount),0);
-  const spent = data.transactions.filter(t=>t.type==="expense").reduce((s,t)=>s+Number(t.amount),0);
-  const extraIncome = data.transactions.filter(t=>t.type==="income").reduce((s,t)=>s+Number(t.amount),0);
+  const spent = data.transactions.filter(t => t.type === "expense").reduce((s,t) => s + Number(t.amount), 0);
+  const extraIncome = data.transactions.filter(t => t.type === "income").reduce((s,t) => s + Number(t.amount), 0);
   
-  const totalIncome = Number(data.income) + extraIncome;
-  const available = totalIncome - fixed - spent - Number(data.saving);
+  const totalIncome = BASE_INCOME + extraIncome;
+  const committed = BASE_FIXED + spent;
+  const available = totalIncome - committed;
 
-  document.getElementById("monthDisplay").textContent = new Date().toLocaleDateString("ca-ES",{month:"short",year:"numeric"});
-  document.getElementById("available").textContent = money(available);
-  
-  const committed = fixed + spent + Number(data.saving);
+  // Calcul percentatge anell
   const percent = Math.min(100, Math.max(0, Math.round((committed / Math.max(1, totalIncome)) * 100)));
   
-  // Anell de progrés SVG
+  // Actualització anell SVG
   const circle = document.getElementById("ringCircle");
-  const circumference = 2 * Math.PI * 45; // r=45
+  const circumference = 2 * Math.PI * 45;
   const offset = circumference - (percent / 100) * circumference;
   circle.style.strokeDasharray = `${circumference}`;
   circle.style.strokeDashoffset = offset;
   
-  if (percent > 90) circle.style.stroke = "var(--red)";
-  else circle.style.stroke = "var(--accent)";
+  circle.style.stroke = percent > 90 ? "var(--red)" : "var(--accent)";
 
   document.getElementById("ringPercent").textContent = percent + "%";
-  document.getElementById("subText").textContent = `${money(committed)} de ${money(totalIncome)}`;
+  document.getElementById("available").textContent = money(available);
+  document.getElementById("subText").textContent = `${money(committed)} usats de ${money(totalIncome)}`;
 
+  // Moviments recents
   const txs = [...data.transactions].reverse();
-  document.getElementById("recent").innerHTML = txs.length ? txs.map(t => `
+  document.getElementById("history").innerHTML = txs.length ? txs.slice(0, 5).map(t => `
     <div class="row">
-      <div><div class="row-title">${t.name}</div><div class="row-sub">${t.date} · ${t.category}</div></div>
-      <div class="amount ${t.type==='income'?'positive':'negative'}">${t.type==='income'?'+':'−'}${money(t.amount)}</div>
+      <div>
+        <div class="tx-title">${t.name}</div>
+        <div class="tx-sub">${t.date} · ${t.category}</div>
+      </div>
+      <div class="tx-amount ${t.type === 'income' ? 'pos' : 'neg'}">
+        ${t.type === 'income' ? '+' : '−'}${money(t.amount)}
+      </div>
     </div>
-  `).join("") : '<div style="color:var(--muted);font-size:12px;text-align:center;padding:10px;">Sense moviments registrats.</div>';
+  `).join("") : '<div style="color:var(--muted);font-size:12px;text-align:center;padding:8px;">Sense moviments encara.</div>';
 }
 
-document.getElementById("widgetQuickForm").addEventListener("submit", e => {
+document.getElementById("widgetForm").addEventListener("submit", e => {
   e.preventDefault();
   data.transactions.push({
     id: Date.now().toString(),
