@@ -288,7 +288,7 @@ nav button.active {color:var(--accent)}
 </nav>
 
 <script>
-  function quickAdd(concept, amount, category) {
+    function quickAdd(concept, amount, category) {
     data.transactions.push({
         id: Date.now().toString(),
         name: concept,
@@ -296,6 +296,38 @@ nav button.active {color:var(--accent)}
         date: today(),
         type: "expense",
         category: category
+      // --- LEER DATOS DESDE EL WIDGET / ACCESO DIRECTO ---
+function checkShortcutInput() {
+    if (window.location.hash.includes("quick")) {
+        try {
+            const hashQuery = window.location.hash.split("?")[1];
+            const params = new URLSearchParams(hashQuery);
+            const concept = params.get("concept");
+            const amount = Number(params.get("amount"));
+            const type = params.get("type") || "expense";
+            const category = params.get("category") || "Otros";
+
+            if (concept && amount > 0) {
+                data.transactions.push({
+                    id: Date.now().toString(),
+                    name: decodeURIComponent(concept),
+                    amount: amount,
+                    date: today(),
+                    type: type,
+                    category: category
+                });
+                save();
+                // Limpia la dirección URL para no duplicar el gasto al recargar
+                history.replaceState(null, null, window.location.pathname);
+            }
+        } catch (e) {
+            console.error("Error al procesar entrada del widget", e);
+        }
+    }
+}
+
+// Ejecutar la lectura al cargar la página
+checkShortcutInput();
     });
     save(); // Guarda automáticamente en el navegador y actualiza las pantallas
 }
