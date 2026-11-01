@@ -1,0 +1,542 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101722">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mi Control">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Mi Control</title>
+
+<style>
+:root {
+  --bg:#0b111a;
+  --panel:#141e2b;
+  --panel2:#1b2838;
+  --text:#f3f6fb;
+  --muted:#94a3b8;
+  --line:#29384a;
+  --accent:#75a7ff;
+  --green:#53d6a0;
+  --red:#ff7180;
+  --gold:#f4c66a;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  padding-bottom:100px;
+}
+header {
+  padding:calc(22px + env(safe-area-inset-top)) 20px 20px;
+  background:linear-gradient(135deg,#17283d,#101722);
+  border-bottom:1px solid var(--line);
+}
+.header-row {display:flex;justify-content:space-between;align-items:center}
+.logo {font-size:21px;font-weight:850;letter-spacing:-.5px}
+.logo span {color:var(--accent)}
+.month {font-size:12px;color:var(--muted);margin-top:8px;text-transform:capitalize}
+main {max-width:650px;margin:auto;padding:16px}
+.card {
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:19px;
+  padding:17px;
+  margin-bottom:13px;
+}
+.hero {
+  background:linear-gradient(145deg,#203b5d,#17263a);
+  border:1px solid #355477;
+  border-radius:22px;
+  padding:21px;
+  margin-bottom:13px;
+}
+.eyebrow {
+  color:var(--muted);
+  font-size:11px;
+  font-weight:750;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}
+.hero .eyebrow {color:#b7c9df}
+.balance {font-size:39px;font-weight:850;letter-spacing:-1.5px;margin:10px 0 4px}
+.muted {color:var(--muted);font-size:12px;line-height:1.5}
+.grid {display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat {background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px}
+.stat-value {font-size:22px;font-weight:800;margin-top:8px}
+h2 {font-size:17px;margin:22px 2px 11px}
+h3 {font-size:14px;margin:0 0 13px}
+.row {display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.row:last-child {border-bottom:0}
+.row-title {font-weight:700;font-size:13px}
+.row-sub {color:var(--muted);font-size:11px;margin-top:4px}
+.amount {font-weight:800;white-space:nowrap}
+.positive {color:var(--green)}
+.negative {color:var(--red)}
+.progress {height:7px;background:#29384a;border-radius:20px;overflow:hidden;margin:10px 0 6px}
+.progress-fill {height:100%;background:var(--accent);border-radius:20px}
+button {
+  border:0;border-radius:12px;padding:12px 15px;
+  background:var(--accent);color:#07111e;font-weight:800;
+  font-size:13px;cursor:pointer;
+}
+button.secondary {background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+button.danger {background:#48232b;color:#ffb2bb}
+button.small {padding:7px 10px;font-size:11px}
+input,select {
+  width:100%;padding:12px;margin:6px 0 14px;
+  border-radius:11px;border:1px solid var(--line);
+  background:#0e1722;color:var(--text);font:inherit;
+}
+label {font-size:12px;color:var(--muted);font-weight:700}
+form {background:var(--panel);padding:17px;border:1px solid var(--line);border-radius:17px;margin:13px 0}
+.form-grid {display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.section-head {display:flex;justify-content:space-between;align-items:center;gap:10px}
+nav {
+  position:fixed;bottom:0;left:0;right:0;z-index:5;
+  display:flex;justify-content:space-around;
+  padding:10px 4px calc(10px + env(safe-area-inset-bottom));
+  background:#101722f2;backdrop-filter:blur(15px);
+  border-top:1px solid var(--line);
+}
+nav button {
+  background:none;color:var(--muted);padding:5px 8px;
+  display:flex;flex-direction:column;gap:5px;align-items:center;
+  font-size:10px;
+}
+nav button span {font-size:20px}
+nav button.active {color:var(--accent)}
+.hidden {display:none!important}
+.notice {padding:13px;border-radius:13px;background:#302a1d;color:#f4d99b;font-size:12px;line-height:1.5;margin:12px 0}
+.empty {text-align:center;color:var(--muted);padding:20px 5px;font-size:13px}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="header-row">
+    <div class="logo">◈ MI <span>CONTROL</span></div>
+    <div class="muted">FINANZAS PERSONALES</div>
+  </div>
+  <div class="month" id="month"></div>
+</header>
+
+<main>
+<section id="home">
+  <div class="hero">
+    <div class="eyebrow">Dinero disponible estimado</div>
+    <div class="balance" id="available">0 €</div>
+    <div class="muted">Después de gastos fijos, gastos registrados y ahorro objetivo.</div>
+    <div class="progress"><div class="progress-fill" id="mainProgress"></div></div>
+    <div class="muted" id="progressText"></div>
+  </div>
+
+  <div class="grid">
+    <div class="stat">
+      <div class="eyebrow">Ingresos</div>
+      <div class="stat-value" id="income">0 €</div>
+    </div>
+    <div class="stat">
+      <div class="eyebrow">Gastos registrados</div>
+      <div class="stat-value" id="spent">0 €</div>
+    </div>
+    <div class="stat">
+      <div class="eyebrow">Ahorro previsto</div>
+      <div class="stat-value" id="saving">0 €</div>
+    </div>
+    <div class="stat">
+      <div class="eyebrow">Gastos fijos</div>
+      <div class="stat-value" id="fixedTotal">0 €</div>
+    </div>
+  </div>
+
+  <h2>Presupuestos del mes</h2>
+  <div class="card" id="budgetSummary"></div>
+
+  <div class="section-head">
+    <h2>Últimos movimientos</h2>
+    <button class="secondary small" onclick="showTab('movements')">Ver todos</button>
+  </div>
+  <div class="card" id="recent"></div>
+  <div class="notice">Los cálculos son orientativos y dependen de los movimientos que registres. Esta aplicación no está conectada a tu banco.</div>
+</section>
+
+<section id="movements" class="hidden">
+  <h2>Movimientos</h2>
+  <div class="card" id="transactions"></div>
+
+  <form id="transactionForm">
+    <h3>Añadir movimiento</h3>
+    <label>Concepto</label>
+    <input id="concept" placeholder="Ej. Compra supermercado" required>
+    <div class="form-grid">
+      <div>
+        <label>Importe (€)</label>
+        <input id="amount" type="number" min="0.01" step="0.01" required>
+      </div>
+      <div>
+        <label>Fecha</label>
+        <input id="date" type="date" required>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div>
+        <label>Tipo</label>
+        <select id="type">
+          <option value="expense">Gasto</option>
+          <option value="income">Ingreso</option>
+        </select>
+      </div>
+      <div>
+        <label>Categoría</label>
+        <select id="category">
+          <option>Supermercado</option>
+          <option>Restaurantes</option>
+          <option>Gasolina Dacia</option>
+          <option>Gasolina Honda</option>
+          <option>Transporte</option>
+          <option>Coche y moto</option>
+          <option>Gatos</option>
+          <option>Ocio</option>
+          <option>Compras</option>
+          <option>Salud</option>
+          <option>Suscripciones</option>
+          <option>Otros</option>
+          <option>Ingreso extra</option>
+        </select>
+      </div>
+    </div>
+    <button type="submit" style="width:100%">Guardar movimiento</button>
+  </form>
+</section>
+
+<section id="budget" class="hidden">
+  <h2>Mi presupuesto</h2>
+  <form id="settingsForm">
+    <h3>Ingresos y ahorro</h3>
+    <label>Ingreso neto mensual (€)</label>
+    <input id="incomeInput" type="number" min="0">
+    <label>Objetivo de ahorro mensual (€)</label>
+    <input id="savingInput" type="number" min="0">
+
+    <h3>Gastos fijos mensuales</h3>
+    <div id="fixedInputs"></div>
+
+    <h3>Presupuestos variables mensuales</h3>
+    <div id="variableInputs"></div>
+
+    <button type="submit" style="width:100%">Guardar cambios</button>
+  </form>
+</section>
+
+<section id="goal" class="hidden">
+  <h2>Mi objetivo: Mazda 3</h2>
+  <div class="hero">
+    <div class="eyebrow">Ahorro reservado para el coche</div>
+    <div class="balance" id="goalCurrentDisplay">0 €</div>
+    <div class="muted" id="goalText"></div>
+    <div class="progress"><div class="progress-fill" id="goalProgress"></div></div>
+  </div>
+  <form id="goalForm">
+    <label>Precio objetivo del coche (€)</label>
+    <input id="goalTarget" type="number" min="0">
+    <label>Ahorro actual reservado (€)</label>
+    <input id="goalCurrent" type="number" min="0">
+    <label>Aportación mensual prevista (€)</label>
+    <input id="goalMonthly" type="number" min="0">
+    <button type="submit" style="width:100%">Actualizar objetivo</button>
+  </form>
+</section>
+
+<section id="backup" class="hidden">
+  <h2>Datos y seguridad</h2>
+  <div class="card">
+    <h3>Copia de seguridad</h3>
+    <p class="muted">Tus datos se guardan en este navegador. Exporta una copia periódicamente para evitar perderlos.</p>
+    <button onclick="exportBackup()" style="width:100%">Exportar copia de seguridad</button>
+    <br><br>
+    <label>Restaurar una copia anterior</label>
+    <input type="file" id="backupFile" accept=".json">
+    <button class="secondary" onclick="importBackup()" style="width:100%">Restaurar copia</button>
+  </div>
+  <div class="notice">No guardes aquí contraseñas bancarias, PIN, códigos SMS ni números completos de tarjeta. La aplicación no lee las notificaciones del iPhone.</div>
+  <button class="danger" onclick="resetApp()">Restablecer todos los datos</button>
+</section>
+</main>
+
+<nav>
+  <button class="active" data-tab="home" onclick="showTab('home')"><span>⌂</span>Inicio</button>
+  <button data-tab="movements" onclick="showTab('movements')"><span>↕</span>Movimientos</button>
+  <button data-tab="budget" onclick="showTab('budget')"><span>▤</span>Presupuesto</button>
+  <button data-tab="goal" onclick="showTab('goal')"><span>◎</span>Objetivo</button>
+  <button data-tab="backup" onclick="showTab('backup')"><span>⚙</span>Datos</button>
+</nav>
+
+<script>
+const KEY = "mi-control-finanzas-v1";
+
+const initialData = {
+  income: 1900,
+  saving: 300,
+  fixed: [
+    {name:"Vivienda",amount:425},
+    {name:"Electricidad",amount:45},
+    {name:"Agua",amount:40},
+    {name:"Internet",amount:32},
+    {name:"Cuota Honda",amount:95},
+    {name:"Otros préstamos",amount:100},
+    {name:"Seguros",amount:75}
+  ],
+  budgets: [
+    {name:"Alimentación",category:"Supermercado",amount:260},
+    {name:"Restaurantes",category:"Restaurantes",amount:0},
+    {name:"Gasolina Dacia",category:"Gasolina Dacia",amount:181},
+    {name:"Gasolina Honda",category:"Gasolina Honda",amount:50},
+    {name:"Gatos",category:"Gatos",amount:60},
+    {name:"Ocio y compras",category:"Ocio",amount:100}
+  ],
+  goal:{target:23500,current:4000,monthly:300},
+  transactions:[]
+};
+
+let data;
+try {
+  data = JSON.parse(localStorage.getItem(KEY)) || structuredClone(initialData);
+} catch(e) {
+  data = structuredClone(initialData);
+}
+
+const money = n => new Intl.NumberFormat("es-ES",{
+  style:"currency",currency:"EUR",maximumFractionDigits:2
+}).format(Number(n)||0);
+
+const today = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+};
+
+const thisMonth = () => today().slice(0,7);
+
+function save() {
+  localStorage.setItem(KEY,JSON.stringify(data));
+  render();
+}
+
+function monthlyTransactions() {
+  return data.transactions.filter(t => t.date && t.date.slice(0,7)===thisMonth());
+}
+
+function totalSpent() {
+  return monthlyTransactions()
+    .filter(t=>t.type==="expense")
+    .reduce((s,t)=>s+Number(t.amount),0);
+}
+
+function totalExtraIncome() {
+  return monthlyTransactions()
+    .filter(t=>t.type==="income")
+    .reduce((s,t)=>s+Number(t.amount),0);
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+function showTab(id) {
+  document.querySelectorAll("main section").forEach(s=>s.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+  document.querySelectorAll("nav button").forEach(b=>{
+    b.classList.toggle("active",b.dataset.tab===id);
+  });
+  window.scrollTo(0,0);
+  render();
+}
+
+function render() {
+  const tx = monthlyTransactions();
+  const fixed = data.fixed.reduce((s,x)=>s+Number(x.amount),0);
+  const spent = totalSpent();
+  const income = Number(data.income)+totalExtraIncome();
+  const available = income-fixed-spent-Number(data.saving);
+
+  document.getElementById("month").textContent =
+    new Date().toLocaleDateString("es-ES",{month:"long",year:"numeric"});
+
+  const availableEl = document.getElementById("available");
+  availableEl.textContent = money(available);
+  availableEl.style.color = available<0 ? "var(--red)" : "var(--text)";
+
+  document.getElementById("income").textContent = money(income);
+  document.getElementById("spent").textContent = money(spent);
+  document.getElementById("saving").textContent = money(data.saving);
+  document.getElementById("fixedTotal").textContent = money(fixed);
+
+  const committed = fixed+spent+Number(data.saving);
+  const percent = Math.min(100,Math.max(0,committed/Math.max(1,income)*100));
+  document.getElementById("mainProgress").style.width=percent+"%";
+  document.getElementById("progressText").textContent =
+    `${money(committed)} comprometidos de ${money(income)} este mes`;
+
+  document.getElementById("budgetSummary").innerHTML = data.budgets.map(b=>{
+    const used=tx.filter(t=>t.type==="expense"&&t.category===b.category)
+      .reduce((s,t)=>s+Number(t.amount),0);
+    const p=b.amount>0?Math.min(100,used/b.amount*100):0;
+    const remaining=Number(b.amount)-used;
+    return `<div class="row"><div style="flex:1">
+      <div class="row-title">${escapeHTML(b.name)}</div>
+      <div class="progress"><div class="progress-fill" style="width:${p}%;${used>b.amount?"background:var(--red)":""}"></div></div>
+      <div class="row-sub">${money(used)} gastados de ${money(b.amount)}</div>
+      </div><div class="amount ${remaining<0?"negative":""}">${money(remaining)}</div></div>`;
+  }).join("");
+
+  const latest=[...tx].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
+  document.getElementById("recent").innerHTML = latest.length
+    ? latest.map(transactionHTML).join("")
+    : '<div class="empty">Todavía no has añadido movimientos.</div>';
+
+  const all=[...data.transactions].sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById("transactions").innerHTML = all.length
+    ? all.map(t=>transactionHTML(t,true)).join("")
+    : '<div class="empty">No hay movimientos registrados.</div>';
+
+  document.getElementById("incomeInput").value=data.income;
+  document.getElementById("savingInput").value=data.saving;
+
+  document.getElementById("fixedInputs").innerHTML=data.fixed.map((x,i)=>`
+    <label>${escapeHTML(x.name)} (€)</label>
+    <input type="number" min="0" step="0.01" data-fixed="${i}" value="${x.amount}">
+  `).join("");
+
+  document.getElementById("variableInputs").innerHTML=data.budgets.map((x,i)=>`
+    <label>${escapeHTML(x.name)} (€)</label>
+    <input type="number" min="0" step="0.01" data-budget="${i}" value="${x.amount}">
+  `).join("");
+
+  document.getElementById("goalCurrentDisplay").textContent=money(data.goal.current);
+  document.getElementById("goalText").textContent=
+    `Objetivo ${money(data.goal.target)} · Faltan ${money(Math.max(0,data.goal.target-data.goal.current))}`;
+  document.getElementById("goalProgress").style.width=
+    Math.min(100,data.goal.current/Math.max(1,data.goal.target)*100)+"%";
+
+  document.getElementById("goalTarget").value=data.goal.target;
+  document.getElementById("goalCurrent").value=data.goal.current;
+  document.getElementById("goalMonthly").value=data.goal.monthly;
+  document.getElementById("date").value=today();
+}
+
+function transactionHTML(t,withDelete=false) {
+  const sign=t.type==="income"?"+":"−";
+  const cls=t.type==="income"?"positive":"";
+  const date=new Date(t.date+"T12:00:00").toLocaleDateString("es-ES");
+  return `<div class="row">
+    <div><div class="row-title">${escapeHTML(t.name)}</div>
+    <div class="row-sub">${date} · ${escapeHTML(t.category)}</div></div>
+    <div style="text-align:right">
+      <div class="amount ${cls}">${sign}${money(t.amount)}</div>
+      ${withDelete?`<button class="secondary small" onclick="deleteTransaction('${t.id}')">Eliminar</button>`:""}
+    </div>
+  </div>`;
+}
+
+document.getElementById("transactionForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const amount=Number(document.getElementById("amount").value);
+  if(amount<=0)return alert("Introduce un importe válido.");
+
+  data.transactions.push({
+    id:Date.now().toString(),
+    name:document.getElementById("concept").value.trim(),
+    amount,
+    date:document.getElementById("date").value,
+    type:document.getElementById("type").value,
+    category:document.getElementById("category").value
+  });
+  e.target.reset();
+  save();
+  showTab("movements");
+});
+
+function deleteTransaction(id) {
+  if(confirm("¿Quieres eliminar este movimiento?")) {
+    data.transactions=data.transactions.filter(t=>t.id!==id);
+    save();
+  }
+}
+
+document.getElementById("settingsForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  data.income=Number(document.getElementById("incomeInput").value);
+  data.saving=Number(document.getElementById("savingInput").value);
+  document.querySelectorAll("[data-fixed]").forEach(el=>{
+    data.fixed[Number(el.dataset.fixed)].amount=Number(el.value);
+  });
+  document.querySelectorAll("[data-budget]").forEach(el=>{
+    data.budgets[Number(el.dataset.budget)].amount=Number(el.value);
+  });
+  save();
+  alert("Presupuesto actualizado.");
+});
+
+document.getElementById("goalForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  data.goal={
+    target:Number(document.getElementById("goalTarget").value),
+    current:Number(document.getElementById("goalCurrent").value),
+    monthly:Number(document.getElementById("goalMonthly").value)
+  };
+  save();
+  alert("Objetivo actualizado.");
+});
+
+function exportBackup() {
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="mi-control-copia.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importBackup() {
+  const file=document.getElementById("backupFile").files[0];
+  if(!file)return alert("Selecciona primero una copia JSON.");
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try {
+      const restored=JSON.parse(reader.result);
+      if(!restored.fixed||!restored.transactions||!restored.budgets)throw Error();
+      data=restored;
+      save();
+      alert("Copia restaurada correctamente.");
+    } catch(e) {
+      alert("El archivo no es una copia válida de Mi Control.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetApp() {
+  if(confirm("Se borrarán los movimientos y ajustes guardados. ¿Continuar?")) {
+    localStorage.removeItem(KEY);
+    location.reload();
+  }
+}
+
+if("serviceWorker" in navigator) {
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("./sw.js").catch(console.error);
+  });
+}
+
+render();
+</script>
+</body>
+</html>
