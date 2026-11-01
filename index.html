@@ -368,7 +368,13 @@ const KEY = "mi-control-finanzas-v1";
 /* CONFIGURACIÓN SUPABASE */
 const SUPABASE_URL = "https://wzfpkbbhglcmzkbkythe.supabase.co";
 const SUPABASE_KEY = "sb_publishable_ia8oheXM_G2YJw1TGnWyAA_XR4QusTt";
-
+  
+if (!window.supabase || typeof window.supabase.createClient !== "function") {
+  document.getElementById("authMessage").textContent =
+    "No se ha podido cargar Supabase. Recarga la página con Ctrl + F5.";
+  throw new Error("La librería de Supabase no se ha cargado.");
+}
+  
 const supabase = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY,
