@@ -23,6 +23,23 @@
   --green:#53d6a0;
   --red:#ff7180;
   --gold:#f4c66a;
+  .app-locked main section:not(#authScreen),
+.app-locked nav {
+  display:none!important;
+}
+#authScreen {
+  max-width:440px;
+  margin:35px auto;
+}
+#authScreen .card {
+  padding:24px;
+}
+.auth-message {
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.5;
+  margin:10px 0;
+}
 }
 * {box-sizing:border-box}
 body {
@@ -127,6 +144,25 @@ nav button.active {color:var(--accent)}
 </header>
 
 <main>
+  <section id="authScreen">
+  <div class="card">
+    <div class="logo">◈ MI <span>CONTROL</span></div>
+    <h2>Tu espacio financiero</h2>
+    <p class="muted">Inicia sesión para acceder a tus datos desde cualquiera de tus dispositivos.</p>
+
+    <form id="authForm">
+      <label>Correo electrónico</label>
+      <input id="authEmail" type="email" placeholder="tu@email.com" required>
+
+      <label>Contraseña</label>
+      <input id="authPassword" type="password" placeholder="Mínimo 6 caracteres" minlength="6" required>
+
+      <button type="submit" style="width:100%">Iniciar sesión</button>
+      <button type="button" class="secondary" id="registerButton" style="width:100%;margin-top:10px">Crear cuenta</button>
+      <p id="authMessage" class="auth-message"></p>
+    </form>
+  </div>
+</section>
 <section id="home">
   <div class="hero">
     <div class="eyebrow">Dinero disponible estimado</div>
