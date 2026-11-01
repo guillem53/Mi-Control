@@ -130,6 +130,16 @@ nav button.active {color:var(--accent)}
 <section id="home">
   <div class="hero">
     <div class="eyebrow">Dinero disponible estimado</div>
+    <!-- WIDGET DE GASTOS RÁPIDOS -->
+  <div class="card" style="background: linear-gradient(135deg, #1b2838, #141e2b); border: 1px solid var(--accent);">
+    <div class="eyebrow" style="color: var(--accent); margin-bottom: 8px;">⚡️ Accesos Rápidos</div>
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+      <button class="secondary small" onclick="quickAdd('Café', 1.50, 'Restaurantes')">☕️ Café (1.50 €)</button>
+      <button class="secondary small" onclick="quickAdd('Supermercado', 15, 'Supermercado')">🛒 Super (15 €)</button>
+      <button class="secondary small" onclick="quickAdd('Gasolina Dacia', 20, 'Gasolina Dacia')">⛽️ Dacia (20 €)</button>
+      <button class="secondary small" onclick="quickAdd('Pan / Varios', 2, 'Supermercado')">🥖 Pan (2 €)</button>
+    </div>
+  </div>
     <div class="balance" id="available">0 €</div>
     <div class="muted">Después de gastos fijos, gastos registrados y ahorro objetivo.</div>
     <div class="progress"><div class="progress-fill" id="mainProgress"></div></div>
@@ -278,6 +288,17 @@ nav button.active {color:var(--accent)}
 </nav>
 
 <script>
+  function quickAdd(concept, amount, category) {
+    data.transactions.push({
+        id: Date.now().toString(),
+        name: concept,
+        amount: amount,
+        date: today(),
+        type: "expense",
+        category: category
+    });
+    save(); // Guarda automáticamente en el navegador y actualiza las pantallas
+}
 const KEY = "mi-control-finanzas-v1";
 
 const initialData = {
