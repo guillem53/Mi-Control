@@ -313,8 +313,27 @@ nav button.active {color:var(--accent)}
   <button data-tab="backup" onclick="showTab('backup')"><span>⚙</span>Datos</button>
 </nav>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const KEY = "mi-control-finanzas-v1";
+// Conexión con Supabase
+const SUPABASE_URL = "https://wzfpkbbhglcmzkbkythe.supabase.co";
+const SUPABASE_KEY = "sb_publishable_ia8oheXM_G2YJw1TGnWyAA_XR4QusTt";
+
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY,
+  {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true
+    }
+  }
+);
+
+let currentUser = null;
+let syncTimer = null;
 
 const initialData = {
   income: 1900,
